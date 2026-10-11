@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useEffect, useState } from "react";
 import { projects } from "../../constants";
 
 const Work = () => {
@@ -12,114 +13,180 @@ const Work = () => {
     setSelectedProject(null);
   };
 
+  useEffect(() => {
+    if (!selectedProject) return;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        handleCloseModal();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [selectedProject]);
+
   return (
     <section
       id="work"
-      className="py-24 pb-24 px-[12vw] md:px-[7vw] lg:px-[20vw] font-sans relative"
+      className="relative px-[6vw] py-24 pb-24 font-sans md:px-[7vw] lg:px-[8vw]"
     >
       {/* Section Title */}
-      <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold text-white">PROJECTS</h2>
-        <div className="w-32 h-1 bg-purple-500 mx-auto mt-4"></div>
-        <p className="text-gray-400 mt-4 text-lg font-semibold">
-          A showcase of the projects I have worked on, highlighting my skills
-          and experience in various technologies
+      <div className="mb-16 text-center">
+        <h2 className="text-4xl font-bold text-white">
+          PROJECTS
+        </h2>
+
+        <div className="mx-auto mt-4 h-1 w-32 rounded-full bg-purple-500" />
+
+        <p className="mx-auto mt-4 max-w-3xl text-base font-semibold text-gray-400 sm:text-lg">
+          A showcase of the projects I have worked on, highlighting my
+          skills and experience in web development, data analytics, and
+          AI integration.
         </p>
       </div>
 
       {/* Projects Grid */}
-      <div className="grid gap-12 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-stretch gap-8 md:grid-cols-2 xl:grid-cols-3">
         {projects.map((project) => (
-          <div
+          <button
             key={project.id}
+            type="button"
             onClick={() => handleOpenModal(project)}
-            className="border border-white bg-gray-900 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden cursor-pointer hover:shadow-purple-500/50 hover:-translate-y-2 transition-transform duration-300"
+            aria-label={`View details for ${project.title}`}
+            className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-gray-900/90 text-left shadow-xl transition duration-300 hover:-translate-y-2 hover:border-purple-500/60 hover:shadow-purple-500/20 focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
-            <div className="p-4">
+            {/* Project Image */}
+            <div className="w-full overflow-hidden p-4">
               <img
                 src={project.image}
                 alt={project.title}
-                className="w-full h-48 object-cover rounded-xl"
+                loading="lazy"
+                className="h-48 w-full rounded-xl bg-white object-contain transition-transform duration-500 group-hover:scale-[1.02]"
               />
             </div>
-            <div className="p-6">
-              <h3 className="text-2xl font-bold text-white mb-2">
+
+            {/* Project Details */}
+            <div className="flex flex-1 flex-col p-6 pt-2">
+              <h3 className="mb-3 text-xl font-bold leading-snug text-white">
                 {project.title}
               </h3>
-              <p className="text-gray-500 mb-4 pt-4 line-clamp-3">
+
+              <p className="mb-5 line-clamp-4 text-sm leading-6 text-gray-400">
                 {project.description}
               </p>
-              <div className="mb-4">
-                {project.tags.map((tag, index) => (
+
+              {/* Technology Tags */}
+              <div className="mt-auto flex flex-wrap gap-2">
+                {project.tags.map((tag) => (
                   <span
-                    key={index}
-                    className="inline-block bg-[#251f38] text-xs font-semibold text-purple-500 rounded-full px-2 py-1 mr-2 mb-2"
+                    key={tag}
+                    className="rounded-full border border-purple-500/20 bg-[#251f38] px-3 py-1.5 text-xs font-medium text-purple-300"
                   >
                     {tag}
                   </span>
                 ))}
               </div>
+
+              <span className="mt-6 text-sm font-semibold text-purple-300 transition group-hover:text-purple-200">
+                View Project Details ↗
+              </span>
             </div>
-          </div>
+          </button>
         ))}
       </div>
 
-      {/* Modal Container */}
+      {/* Project Details Modal */}
       {selectedProject && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 p-4">
-          <div className="bg-gray-900 rounded-xl shadow-2xl lg:w-full w-[90%] max-w-3xl overflow-hidden relative">
-            <div className="flex justify-end p-4">
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/85 p-3 backdrop-blur-sm sm:p-6"
+          onClick={handleCloseModal}
+          role="presentation"
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="project-modal-title"
+            className="relative my-auto max-h-[95vh] w-full max-w-4xl overflow-y-auto rounded-2xl border border-white/10 bg-[#100d25] shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-white/10 bg-[#100d25]/95 px-5 py-4 backdrop-blur sm:px-7">
+              <h3
+                id="project-modal-title"
+                className="text-lg font-bold text-white sm:text-2xl"
+              >
+                {selectedProject.title}
+              </h3>
+
               <button
+                type="button"
                 onClick={handleCloseModal}
-                className="text-white text-3xl font-bold hover:text-purple-500"
+                aria-label="Close project details"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/15 text-2xl text-white transition hover:border-purple-500 hover:bg-purple-500/10 hover:text-purple-300"
               >
                 &times;
               </button>
             </div>
 
-            <div className="flex flex-col">
-              <div className="w-full flex justify-center bg-gray-900 px-4">
+            {/* Modal Content */}
+            <div className="p-5 sm:p-7">
+              <div className="flex min-h-48 items-center justify-center overflow-hidden rounded-xl bg-white p-2 sm:min-h-64">
                 <img
                   src={selectedProject.image}
-                  alt={selectedProject.title}
-                  className="lg:w-full w-[95%] object-contain rounded-xl shadow-2xl"
+                  alt={`${selectedProject.title} preview`}
+                  className="max-h-[55vh] w-full rounded-lg object-contain"
                 />
               </div>
-              <div className="lg:p-8 p-6">
-                <h3 className="lg:text-3xl font-bold text-white mb-4 text-md">
-                  {selectedProject.title}
-                </h3>
-                <p className="text-gray-400 mb-6 lg:text-base text-xs">
-                  {selectedProject.description}
-                </p>
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {selectedProject.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="bg-[#251f38] text-xs font-semibold text-purple-500 rounded-full px-2 py-1"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <div className="flex gap-4">
-                  <a
-                    href={selectedProject.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-1/2 bg-gray-800 hover:bg-purple-800 text-gray-400 lg:px-6 lg:py-2 px-2 py-1 rounded-xl lg:text-xl text-sm font-semibold text-center"
+
+              <p className="mt-6 text-sm leading-7 text-gray-300 sm:text-base">
+                {selectedProject.description}
+              </p>
+
+              {/* Technology Tags */}
+              <div className="mt-5 flex flex-wrap gap-2">
+                {selectedProject.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full border border-purple-500/20 bg-[#251f38] px-3 py-1.5 text-xs font-medium text-purple-300 sm:text-sm"
                   >
-                    View Code
-                  </a>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              {/* Project Links */}
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                {selectedProject.github &&
+                  selectedProject.github !==
+                    "ADD_YOUR_HOSPITAL_PROJECT_GITHUB_URL" && (
+                    <a
+                      href={selectedProject.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(event) => event.stopPropagation()}
+                      className="flex-1 rounded-xl border border-white/10 bg-gray-800 px-5 py-3 text-center text-sm font-semibold text-white transition hover:border-purple-500/50 hover:bg-gray-700 sm:text-base"
+                    >
+                      View Code on GitHub ↗
+                    </a>
+                  )}
+
+                {selectedProject.webapp && (
                   <a
                     href={selectedProject.webapp}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-1/2 bg-purple-600 hover:bg-purple-800 text-white lg:px-6 lg:py-2 px-2 py-1 rounded-xl lg:text-xl text-sm font-semibold text-center"
+                    onClick={(event) => event.stopPropagation()}
+                    className="flex-1 rounded-xl bg-purple-600 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-purple-500 sm:text-base"
                   >
-                    View Live
+                    View Live Project ↗
                   </a>
-                </div>
+                )}
               </div>
             </div>
           </div>

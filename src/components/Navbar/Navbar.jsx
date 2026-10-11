@@ -1,143 +1,207 @@
+
 import React, { useState, useEffect } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
+  const [activeSection, setActiveSection] = useState("about");
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Detect scroll and change navbar background
+  // Handle navbar background and active section while scrolling
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
+
+      const sections = [
+        "about",
+        "skills",
+        "experience",
+        "work",
+        "education",
+        "certificates",
+        "contact",
+      ];
+
+      let currentSection = "about";
+
+      sections.forEach((sectionId) => {
+        const section = document.getElementById(sectionId);
+
+        if (
+          section &&
+          window.scrollY >= section.offsetTop - 150
+        ) {
+          currentSection = sectionId;
+        }
+      });
+
+      setActiveSection(currentSection);
     };
 
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    handleScroll();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
-  // Smooth scroll function
+  // Smooth scrolling and close mobile menu after selection
   const handleMenuItemClick = (sectionId) => {
     setActiveSection(sectionId);
     setIsOpen(false);
 
     const section = document.getElementById(sectionId);
+
     if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
+      section.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     }
   };
 
+  // All navigation sections
   const menuItems = [
     { id: "about", label: "About" },
     { id: "skills", label: "Skills" },
     { id: "experience", label: "Experience" },
     { id: "work", label: "Projects" },
     { id: "education", label: "Education" },
+    { id: "certificates", label: "Certifications" },
+    { id: "contact", label: "Contact" },
+  ];
+
+  // Social profile links
+  const socialLinks = [
+    {
+      name: "GitHub",
+      url: "https://github.com/sethsumitkumar",
+      icon: <FaGithub size={22} />,
+    },
+    {
+      name: "LinkedIn",
+      url: "https://www.linkedin.com/in/sumit-kumar-881041254/",
+      icon: <FaLinkedin size={22} />,
+    },
   ];
 
   return (
     <nav
-      className={`fixed top-0 w-full z-50 transition duration-300 px-[7vw] md:px-[7vw] lg:px-[20vw] ${
-        isScrolled ? "bg-[#050414] bg-opacity-50 backdrop-blur-md shadow-md" : "bg-transparent"
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 px-[6vw] md:px-[5vw] lg:px-[8vw] ${
+        isScrolled
+          ? "bg-[#050414]/90 backdrop-blur-md shadow-lg shadow-purple-900/10"
+          : "bg-transparent"
       }`}
     >
       <div className="text-white py-5 flex justify-between items-center">
         {/* Logo */}
-        <div className="text-lg font-semibold cursor-pointer">
+        <button
+          type="button"
+          onClick={() => handleMenuItemClick("about")}
+          className="text-lg font-semibold cursor-pointer whitespace-nowrap"
+          aria-label="Go to About section"
+        >
           <span className="text-[#8245ec]">&lt;</span>
           <span className="text-white">Sumit</span>
           <span className="text-[#8245ec]">/</span>
           <span className="text-white">Kumar</span>
           <span className="text-[#8245ec]">&gt;</span>
-        </div>
+        </button>
 
-        {/* Desktop Menu */}
-        <ul className="hidden md:flex space-x-8 text-gray-300">
+        {/* Desktop Navigation */}
+        <ul className="hidden md:flex items-center gap-5 lg:gap-7 text-sm lg:text-base text-gray-300">
           {menuItems.map((item) => (
-            <li
-              key={item.id}
-              className={`cursor-pointer hover:text-[#8245ec] ${
-                activeSection === item.id ? "text-[#8245ec]" : ""
-              }`}
-            >
-              <button onClick={() => handleMenuItemClick(item.id)}>
+            <li key={item.id}>
+              <button
+                type="button"
+                onClick={() => handleMenuItemClick(item.id)}
+                className={`relative whitespace-nowrap transition-colors duration-200 hover:text-[#8245ec] ${
+                  activeSection === item.id
+                    ? "text-[#8245ec]"
+                    : "text-gray-300"
+                }`}
+              >
                 {item.label}
+
+                {activeSection === item.id && (
+                  <span className="absolute -bottom-2 left-0 w-full h-0.5 rounded-full bg-[#8245ec]" />
+                )}
               </button>
             </li>
           ))}
         </ul>
 
-        {/* Social Icons */}
-        <div className="hidden md:flex space-x-4">
-          <a
-            href="https://github.com/codingmastr"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-300 hover:text-[#8245ec]"
-          >
-            <FaGithub size={24} />
-          </a>
-          <a
-            href="https://www.linkedin.com/in/tarun-kaushik-553b441a4"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-300 hover:text-[#8245ec]"
-          >
-            <FaLinkedin size={24} />
-          </a>
+        {/* Desktop Social Links */}
+        <div className="hidden md:flex items-center gap-4">
+          {socialLinks.map((social) => (
+            <a
+              key={social.name}
+              href={social.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Visit ${social.name} profile`}
+              title={social.name}
+              className="text-gray-300 transition-colors duration-200 hover:text-[#8245ec]"
+            >
+              {social.icon}
+            </a>
+          ))}
         </div>
 
-        {/* Mobile Menu Icon */}
-        <div className="md:hidden">
-          {isOpen ? (
-            <FiX
-              className="text-3xl text-[#8245ec] cursor-pointer"
-              onClick={() => setIsOpen(false)}
-            />
-          ) : (
-            <FiMenu
-              className="text-3xl text-[#8245ec] cursor-pointer"
-              onClick={() => setIsOpen(true)}
-            />
-          )}
-        </div>
+        {/* Mobile Menu Toggle */}
+        <button
+          type="button"
+          className="md:hidden text-3xl text-[#8245ec]"
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label={
+            isOpen
+              ? "Close navigation menu"
+              : "Open navigation menu"
+          }
+          aria-expanded={isOpen}
+        >
+          {isOpen ? <FiX /> : <FiMenu />}
+        </button>
       </div>
 
-      {/* Mobile Menu Items */}
+      {/* Mobile Navigation */}
       {isOpen && (
-        <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-4/5 bg-[#050414] bg-opacity-50 backdrop-filter backdrop-blur-lg z-50 rounded-lg shadow-lg md:hidden">
-          <ul className="flex flex-col items-center space-y-4 py-4 text-gray-300">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 w-[90%] max-w-sm rounded-xl border border-white/10 bg-[#100d25]/95 backdrop-blur-xl shadow-xl md:hidden">
+          <ul className="flex flex-col items-center gap-5 py-6 text-gray-300">
             {menuItems.map((item) => (
-              <li
-                key={item.id}
-                className={`cursor-pointer hover:text-white ${
-                  activeSection === item.id ? "text-[#8245ec]" : ""
-                }`}
-              >
-                <button onClick={() => handleMenuItemClick(item.id)}>
+              <li key={item.id}>
+                <button
+                  type="button"
+                  onClick={() => handleMenuItemClick(item.id)}
+                  className={`transition-colors duration-200 hover:text-[#8245ec] ${
+                    activeSection === item.id
+                      ? "text-[#8245ec]"
+                      : "text-gray-300"
+                  }`}
+                >
                   {item.label}
                 </button>
               </li>
             ))}
-            <div className="flex space-x-4">
-              <a
-                href="https://github.com/codingmastr"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-300 hover:text-white"
-              >
-                <FaGithub size={24} />
-              </a>
-              <a
-                href="https://www.linkedin.com/in/tarun-kaushik-553b441a4"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-300 hover:text-white"
-              >
-                <FaLinkedin size={24} />
-              </a>
-            </div>
+
+            {/* Mobile Social Links */}
+            <li className="flex items-center gap-6 pt-2">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.name}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Visit ${social.name} profile`}
+                  title={social.name}
+                  className="text-gray-300 transition-colors hover:text-[#8245ec]"
+                >
+                  {social.icon}
+                </a>
+              ))}
+            </li>
           </ul>
         </div>
       )}

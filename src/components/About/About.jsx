@@ -16,51 +16,60 @@ const About = () => {
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2 leading-tight">
             Hi, I am
           </h1>
+
           {/* Name */}
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-4 leading-tight">
             Sumit Kumar
           </h2>
-          {/* Skills Heading with Typing Effect */}
+
+          {/* Typing Effect */}
           <h3 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-4 text-[#8245ec] leading-tight">
-            <span className="text-white">I am a </span>
+            <span className="text-white">Open to </span>
             <ReactTypingEffect
               text={[
-                'MERN Stack',
-                'Coder',
+                'Entry-Level Opportunities',
+                'Graduate Roles',
+                'Software & Technology Roles',
+                'Data & Analytics Roles',
+                'New Challenges & Learning',
               ]}
-              speed={100}
-              eraseSpeed={50}
+              speed={80}
+              eraseSpeed={40}
               typingDelay={500}
-              eraseDelay={2000}
+              eraseDelay={1800}
               cursorRenderer={(cursor) => (
                 <span className="text-[#8245ec]">{cursor}</span>
               )}
             />
           </h3>
-          {/* About Me Paragraph */}
+
+          {/* About Me */}
           <p className="text-base sm:text-lg md:text-lg text-gray-400 mb-10 mt-8 leading-relaxed">
-         I am a dedicated MERN Stack Developer skilled in building dynamic
-         and responsive full-stack web applications. I have hands-on
-         experience working with MongoDB, Express.js, React.js, and Node.js,
-         and I focus on creating efficient backend APIs and modern frontend
-         interfaces. I am passionate about learning new technologies and
-         delivering impactful digital solutions.
+            I am a motivated engineering graduate with hands-on experience in
+            software development, data analytics, and building technology
+            projects. I enjoy solving problems, learning new technologies, and
+            adapting to different challenges. I am open to entry-level
+            opportunities across software, IT, data, and other technology
+            domains where I can contribute, grow my skills, and make a
+            meaningful impact.
           </p>
+
           {/* Resume Button */}
           <a
-            href="#"
+            href="https://drive.google.com/file/d/1gTYRK8JfH8F5bf_Zi0zHc-BJZ7oSL8AI/view?usp=sharing"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block text-white py-3 px-8 rounded-full mt-5 text-lg font-bold transition duration-300 transform hover:scale-105"
             style={{
               background: 'linear-gradient(90deg, #8245ec, #a855f7)',
-              boxShadow: '0 0 2px #8245ec, 0 0 2px #8245ec, 0 0 40px #8245ec',
+              boxShadow:
+                '0 0 2px #8245ec, 0 0 2px #8245ec, 0 0 40px #8245ec',
             }}
           >
             DOWNLOAD CV
           </a>
-          
         </div>
+
         {/* Right Side */}
         <div className="md:w-1/2 flex justify-center md:justify-end">
           <Tilt
